@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from tkinter import filedialog, scrolledtext, messagebox,ttk
+from tkinter import filedialog, scrolledtext, messagebox
 import pandas as pd
 import re
 
@@ -125,9 +125,32 @@ def open_home_page():
     
     # Configure the window to display the menu bar
     root.config(menu=menu_bar)
+    # Create a Canvas for Scrolling
+    canvas = tk.Canvas(root)
+    scrollbar = tk.Scrollbar(root, orient="vertical", command=canvas.yview)
+    scrollable_frame = tk.Frame(canvas)  # The Frame That Holds All Widgets
+
+    # Configure Scrolling Behavior
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")  # Update Scroll Region Dynamically
+        )
+    )
+
+    # Create a Window Inside the Canvas
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    # Pack Canvas and Scrollbar
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
+    global label_plm, label_jira,text_area_jira,text_area_plm, df_plm, df_jira,text_area_compare,btn_export,overwrite_plm_radio,overwrite_jira_radio,column_combobox,btn_column_select,overwrite_var  # Make labels global so they can be updated
+    global label_plm, label_jira, text_area_jira, text_area_plm, df_plm, df_jira, text_area_compare
+    global btn_export, overwrite_plm_radio, overwrite_jira_radio, column_combobox, btn_column_select, overwrite_var
 
     # Create a frame for organizing widgets in a grid
-    frame = tk.Frame(root)
+    frame = tk.Frame(scrollable_frame)
     frame.pack(pady=20, padx=20)
 
     # PLM File Selection (Left Side)
